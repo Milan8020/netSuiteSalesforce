@@ -1,0 +1,1002 @@
+<!-- Start Parent Component -->
+<template>
+    <!-- Start Spinner -->
+    <template if:true={isLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+    <!-- End Spinner -->
+
+    <!-- Start Component -->
+    <div class="slds-box slds-theme_shade">
+        <!-- Start Common Component header -->
+        <div class="slds-box slds-m-horizontal_xx-small slds-m-vertical_medium slds-theme_default">
+            <div class="slds-grid">
+                <div class="slds-col slds-p-horizontal_medium">
+                    <h1 slot="title"><b>Custom Apex Generation</b></h1>
+                    <p>Breadwinner - NetSuite</p>
+                </div>
+            </div>
+        </div>
+        <!-- End Common Component header -->
+
+        <!-- Start first page -->
+        <template if:true={boolSelectObjVisible}>
+            <lightning-card>
+                <!-- Start Section1 -->
+                <template if:true={boolSectionOne}>
+                    <div class="slds-box slds-theme_shade slds-m-horizontal_large slds-m-bottom_medium" style="border-top: 3px solid #0070D2;">
+                        <div class="slds-grid  slds-gutters">
+                            <div class="slds-size_1-of-2">
+                                <p class="slds-p-horizontal_small">Select NetSuite Object</p>
+                            </div>
+                            <div class="slds-size_1-of-2 slds-m-left_medium">
+                                <p>Select Salesforce Object</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-m-right_xx-large">
+                        <div class="slds-grid slds-gutters slds-m-around_small">
+                            <!-- Start displaying Netsuite Objectname List -->
+                            <div class="slds-size_1-of-2 slds-m-left_small">
+                                <select id="piclistOption1" class="piclistOption1 slds-select slds-p-horizontal_small" name="piclistOption1" onchange={changeHandler} disabled={isSectionOneDisabled}>
+                                    <option value="select">-- Please Select an Object--</option>
+                                    <template for:each={nSuiteObjectApiName} for:item="nSuiteObjectApi">
+                                        <option key={nSuiteObjectApi.key} value={nSuiteObjectApi.apiKey} selected={nSuiteObjectApi.isSelected}> {nSuiteObjectApi.label}</option>
+                                    </template>
+                                </select>
+                            </div>
+                            <!-- End displaying Netsuite Objectname List -->
+
+                            <!-- Start displaying Salesforce Objectname List -->
+                            <div class="slds-size_1-of-2 slds-m-left_large">
+                                <template if:true={objects}>
+                                    <select id="piclistOption2" class="piclistOption2 slds-select slds-p-horizontal_small" name="piclistOption2" onchange={changeHandler} disabled={isSectionOneDisabled}>
+                                        <option value="select">-- Please Select an Object --</option>
+                                        <template for:each={objects} for:item="object">
+                                            <option key={object.key} value={object.key} selected={object.isSelected}> {object.value} ({object.key}) </option>
+                                        </template>
+                                    </select>
+                                </template>
+                            </div>
+                            <!-- End displaying Salesforce Objectname List -->
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </template>
+                <!-- End Section1 -->
+
+                <!-- Start Section2 -->
+                <template if:true={boolSectionTwo}>
+                    <!-- Start picklist3 "Create", "Edit", "Create And/Or Edit" -->
+                    <div class="slds-box slds-theme_shade slds-m-horizontal_large slds-m-bottom_medium" style="border-top: 3px solid #0070D2;">
+                        <div>
+                            <p>Do you want to Create or Edit a {netSuitObjLabelWithSpace}?</p>
+                        </div>
+                    </div>
+                    <div class="slds-m-right_small">
+                        <div class="slds-m-around_small">
+                            <!-- Start displaying Salesforce Objectname List -->
+                            <div class="slds-m-left_small">
+                                <select id="piclistOption3" class="piclistOption3 slds-select slds-p-horizontal_small" name="piclistOption3" onchange={changeHandler} disabled={isSectionTwoDisabled}>
+                                    <option value="select">-- Please Select an Option --</option>
+                                    <template for:each={createEditOption} for:item="createEditOpt">
+                                        <template if:true={createEditOpt.isDisabled}>
+                                            <option key={createEditOpt.key} value={createEditOpt.apiKey} disabled=true selected={createEditOpt.isSelected}> {createEditOpt.label} </option>
+                                        </template>
+                                        <template if:false={createEditOpt.isDisabled}>
+                                            <option key={createEditOpt.key} value={createEditOpt.apiKey} selected={createEditOpt.isSelected}> {createEditOpt.label} </option>
+                                        </template>
+                                    </template>
+                                </select>
+                            </div>
+                            <!-- End displaying Salesforce Objectname List -->
+                        </div>
+                    </div>
+                    <!-- End picklist3 "Create", "Edit", "Create And/Or Edit" -->
+                    <br />
+                    <br />
+                </template>
+                <!-- End Section2 -->
+
+                <!-- Start Section3 -->
+                <template if:true={boolSectionThree}>
+                    <!-- Start picklist4 "Trigger", "Button", "Workflow And/Or Flow" -->
+                    <div class="slds-box slds-theme_shade slds-m-horizontal_large slds-m-bottom_medium" style="border-top: 3px solid #0070D2;">
+                        <div>
+                            <p>{createEditLabel} a {netSuitObjLabelWithSpace} through a</p>
+                        </div>
+                    </div>
+                    <div class="slds-m-right_small">
+                        <div class="slds-m-around_small">
+                            <!-- Start displaying Salesforce Objectname List -->
+                            <div class="slds-m-left_small">
+                                <select id="piclistOption4" class="piclistOption4 slds-select slds-p-horizontal_small" name="piclistOption4" onchange={changeHandler} disabled={isSectionThreeDisabled}>
+                                    <option value="select">-- Please Select an Option --</option>
+                                    <template for:each={triggerButtonFlowOption} for:item="triggerButtonFlowOpt">
+                                        <template if:true={triggerButtonFlowOpt.isDisabled}>
+                                            <option key={triggerButtonFlowOpt.key} value={triggerButtonFlowOpt.apiKey} disabled=true selected={triggerButtonFlowOpt.isSelected}> {triggerButtonFlowOpt.label} </option>
+                                        </template>
+                                        <template if:false={triggerButtonFlowOpt.isDisabled}>
+                                            <option key={triggerButtonFlowOpt.key} value={triggerButtonFlowOpt.apiKey} selected={triggerButtonFlowOpt.isSelected}> {triggerButtonFlowOpt.label} </option>
+                                        </template>
+                                    </template>
+                                </select>
+                            </div>
+                            <!-- End displaying Salesforce Objectname List -->
+                        </div>
+                    </div>
+                    <!-- Start picklist4 "Trigger", "Button", "Workflow And/Or Flow" -->
+                    <br />
+                    <br />
+                </template>
+                <!-- End Section3 -->
+
+                <!-- Start picklist5 "Create Trigger", "Edit Trigger" after click on "Trigger" value of picklist4 -->
+                <template if:true={boolSectionFourOne}>
+                    <div class="slds-box slds-theme_shade slds-m-horizontal_large slds-m-bottom_medium" style="border-top: 3px solid #0070D2;">
+                        <div>
+                            <p>Run this {triggerButtonFlowLabel} to {createEditLabel} a {netSuitObjLabelWithSpace} when the Salesforce {sfObjLabel} is</p>
+                        </div>
+                    </div>
+                    <div class="slds-m-right_small">
+                        <div class="slds-m-around_small">
+                            <!-- Start displaying Salesforce Objectname List -->
+                            <div class="slds-m-left_small">
+                                <select id="piclistOption5" class="piclistOption5 slds-select slds-p-horizontal_small" name="piclistOption5" onchange={changeHandler} disabled={isSectionFourOneDisabled}>
+                                    <option value="select">-- Please Select an Option --</option>
+                                    <template for:each={afterTriggerCreateEditOption} for:item="afterTriggerCreateEditOpt">
+                                        <template if:true={afterTriggerCreateEditOpt.isDisabled}>
+                                            <option key={afterTriggerCreateEditOpt.key} value={afterTriggerCreateEditOpt.apiKey} disabled=true selected={afterTriggerCreateEditOpt.isSelected}> {afterTriggerCreateEditOpt.label} </option>
+                                        </template>
+                                        <template if:false={afterTriggerCreateEditOpt.isDisabled}>
+                                            <option key={afterTriggerCreateEditOpt.key} value={afterTriggerCreateEditOpt.apiKey} selected={afterTriggerCreateEditOpt.isSelected}> {afterTriggerCreateEditOpt.label} </option>
+                                        </template>
+                                    </template>
+                                </select>
+                            </div>
+                            <!-- End displaying Salesforce Objectname List -->
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </template>
+                <!-- Start picklist5 "Create Trigger", "Edit Trigger" after click on "Trigger" value of picklist4 -->
+
+                <!-- Start picklist6 "Create Button", "Edit Button" after click on "Button" value of picklist4 -->
+                <template if:true={boolSectionFourTwo}>
+                    <div class="slds-box slds-theme_shade slds-m-horizontal_large slds-m-bottom_medium" style="border-top: 3px solid #0070D2;">
+                        <div>
+                            <p>Run this {triggerButtonFlowLabel} on the Salesforce {sfObjLabel} {afterButtonLabel}</p>
+                        </div>
+                    </div>
+                    <div class="slds-m-right_small">
+                        <div class="slds-m-around_small">
+                            <!-- Start displaying Salesforce Objectname List -->
+                            <div class="slds-m-left_small">
+                                <select id="piclistOption6" class="piclistOption6 slds-select slds-p-horizontal_small" name="piclistOption6" onchange={changeHandler} disabled={isSectionFourTwoDisabled}>
+                                    <option value="select">-- Please Select an Option --</option>
+                                    <template for:each={afterButtonOption} for:item="afterButtonOpt">
+                                        <template if:true={afterButtonOpt.isDisabled}>
+                                            <option key={afterButtonOpt.key} value={afterButtonOpt.apiKey} disabled=true selected={afterButtonOpt.isSelected}> {afterButtonOpt.label} </option>
+                                        </template>
+                                        <template if:false={afterButtonOpt.isDisabled}>
+                                            <option key={afterButtonOpt.key} value={afterButtonOpt.apiKey} selected={afterButtonOpt.isSelected}> {afterButtonOpt.label} </option>
+                                        </template>
+                                    </template>
+                                </select>
+                            </div>
+                            <!-- End displaying Salesforce Objectname List -->
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </template>
+                <!-- End picklist6 "Create Button", "Edit Button" after click on "Button" value of picklist4 -->
+
+                <!-- Start picklist7 "Create Workflow", "Edit Workflow" after click on "Workflow" value of picklist4 -->
+                <template if:true={boolSectionFourThree}>
+                    <div class="slds-box slds-theme_shade slds-m-horizontal_large slds-m-bottom_medium" style="border-top: 3px solid #0070D2;">
+                        <div>
+                            <p>Run this {triggerButtonFlowLabel} on the Salesforce {sfObjLabel} {afterWorkflowLabel}</p>
+                        </div>
+                    </div>
+                    <div class="slds-m-right_small">
+                        <div class="slds-m-around_small">
+                            <!-- Start displaying Salesforce Objectname List -->
+                            <div class="slds-m-left_small">
+                                <select id="piclistOption7" class="piclistOption7 slds-select slds-p-horizontal_small" name="piclistOption7" onchange={changeHandler} disabled={isSectionFourThreeDisabled}>
+                                    <option value="select">-- Please Select an Option --</option>
+                                    <template for:each={afterWorkFlowOption} for:item="afterWorkFlowOpt">
+                                        <template if:true={afterWorkFlowOpt.isDisabled}>
+                                            <option key={afterWorkFlowOpt.key} value={afterWorkFlowOpt.apiKey} disabled=true selected={afterWorkFlowOpt.isSelected}> {afterWorkFlowOpt.label} </option>
+                                        </template>
+                                        <template if:false={afterWorkFlowOpt.isDisabled}>
+                                            <option key={afterWorkFlowOpt.key} value={afterWorkFlowOpt.apiKey} selected={afterWorkFlowOpt.isSelected}> {afterWorkFlowOpt.label} </option>
+                                        </template>
+                                    </template>
+                                </select>
+                            </div>
+                            <!-- End displaying Salesforce Objectname List -->
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </template>
+                <!-- End picklist7 "Create Workflow", "Edit Workflow" after click on "Workflow" value of picklist4 -->
+
+                <!-- Start picklist8 "Create Trigger Using FUTURE or QUEUEABLE Method" after click on "Trigger" value of picklist4 -->
+                <template if:true={boolSectionFive}>
+                    <div class="slds-box slds-theme_shade slds-m-horizontal_large slds-m-bottom_medium" style="border-top: 3px solid #0070D2;">
+                        <div>
+                            <p>Run this {triggerButtonFlowLabel} as either a Queueable method or as a Future method</p>
+                        </div>
+                    </div>
+                    <div class="slds-m-right_small">
+                        <div class="slds-m-around_small">
+                            <!-- Start displaying Salesforce Objectname List -->
+                            <div class="slds-m-left_small">
+                                <select id="piclistOption8" class="piclistOption8 slds-select slds-p-horizontal_small" name="piclistOption8" onchange={changeHandler} disabled={isSectionFiveDisabled}>
+                                    <option value="select">-- Please Select an Option --</option>
+                                    <template for:each={afterTriggerFutureQueueableOption} for:item="afterTriggerFutureQueueableOpt">
+                                        <template if:true={afterTriggerFutureQueueableOpt.isDisabled}>
+                                            <option key={afterTriggerFutureQueueableOpt.key} value={afterTriggerFutureQueueableOpt.apiKey} disabled=true selected={afterTriggerFutureQueueableOpt.isSelected}> {afterTriggerFutureQueueableOpt.label} </option>
+                                        </template>
+                                        <template if:false={afterTriggerFutureQueueableOpt.isDisabled}>
+                                            <option key={afterTriggerFutureQueueableOpt.key} value={afterTriggerFutureQueueableOpt.apiKey} selected={afterTriggerFutureQueueableOpt.isSelected}> {afterTriggerFutureQueueableOpt.label} </option>
+                                        </template>
+                                    </template>
+                                </select>
+                            </div>
+                            <!-- End displaying Salesforce Objectname List -->
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </template>
+                <!-- End picklist8 "Create Trigger Using FUTURE or QUEUEABLE Method" after click on "Trigger" value of picklist4 -->
+
+                <!-- Start displaying Error Message -->
+                <template if:true={isMessageVisible}>
+                    <div class="slds-box slds-align_absolute-center slds-m-top_medium slds-m-left_x-large slds-m-right_x-large">
+                        <p class="slds-p-horizontal_small slds-text-color_error">{messsage}</p>
+                    </div>
+                </template>
+                <!-- End displaying Error Message -->
+                
+                <div class="slds-clearfix">
+                    <div class="slds-float_right">
+                        <template if:true={isStartOverButtonVisible}>
+                            <lightning-button variant="neutral" label="Start Over" onclick={onLoad} class="slds-m-left_x-small"></lightning-button>
+                        </template>
+                        <lightning-button variant="brand" label="&ensp; Next &ensp;" title="Primary action" onclick={next} class="slds-m-horizontal_large"></lightning-button>
+                    </div>
+                </div>
+
+            </lightning-card>
+        </template>
+        <!-- End first page -->
+
+        <!-- Start second page -->
+        <template if:true={boolFieldMapVisible}>
+            <!-- Start Spinner -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+            </template>
+            <!-- End Spinner -->
+
+            <lightning-card>
+                <div class="slds-box slds-theme_shade slds-m-horizontal_large" style="border-top: 3px solid #0070D2;">
+                    <div class="slds-grid">
+                        <!-- Start selected Netsuite object name in second page -->
+                        <div class="slds-col slds-size_1-of-3">
+                            <p class="slds-text-heading_x-small">{netSuitObjLabelWithSpace} Object</p>
+                        </div>
+                        <!-- End selected Netsuite object name in second page -->
+                        <div class="slds-col slds-size_1-of-3">
+                            <p class="slds-p-horizontal_large slds-text-heading_x-small">Field Type</p>
+                        </div>
+                        <!-- Start selected Salesforce object name in second page -->
+                        <div class="slds-col slds-size_1-of-3">
+                            <p class="slds-p-horizontal_small slds-text-heading_x-small">Salesforce {sfObjLabel} Object</p>
+                        </div>
+                        <!-- End selected Salesforce object name in second page -->
+                    </div>
+                </div>
+
+                <!-- Start displaying body of Second page of parent component "customTriggerGenLWC" -->
+                <template if:true={nsObjFieldList}>
+                    <template for:each={nsObjFieldList} for:item="nsField" for:index="index">
+                        <div key={nsField.key} class="slds-m-right_xx-large">
+                            <div class="slds-grid slds-gutters slds-m-around_small">
+
+                                <!-- Start selected Netsuite object field in second page -->
+                                <div class="slds-size_1-of-3 slds-m-horizontal_none">
+                                    <h4 class="slds-p-horizontal_xx-large slds-m-horizontal_none">{nsField.value}</h4>
+                                    <!--template if:true={nsField.isArray}>
+                                        <template for:each={nsField.fieldType} for:item="nsSubField" for:index="nsFieldIndex">
+                                            <div key={nsSubField.value} class="slds-size_1-of-3 slds-m-around_medium">
+                                                <h4 key={nsSubField.value} class="slds-p-horizontal_xx-large slds-m-horizontal_none">{nsSubField.value}</h4>
+                                            </div>
+                                        </template>
+                                    </template-->
+                                </div>
+                                <!-- End selected Netsuite object field in second page -->
+
+                                <!-- Start selected Netsuite object fieldtype in second page -->
+                                <div class="slds-size_1-of-3 slds-m-horizontal_none">
+                                    <template if:false={nsField.isArray}>
+                                        <h4 class="slds-p-horizontal_xx-large slds-m-horizontal_none">{nsField.fieldType} </h4>
+                                    </template>
+                                    <template if:true={nsField.isArray}>
+                                        <template if:true={nsField.fieldType}>
+                                            <template for:each={nsField.fieldType} for:item="nsSubFieldTypeForParent" for:index="objFieldParentIndex">
+                                                <h4 key={nsSubFieldTypeForParent.key} class="slds-p-horizontal_xx-large slds-m-horizontal_none">REFERENCE : {nsSubFieldTypeForParent.fieldType} 
+                                                &nbsp;<span style="position: relative; top: -3px;"><lightning-helptext key={nsSubFieldTypeForParent.key} content="A NetSuite Reference is similar to a Salesforce Picklist, but rather than passing the value of the picklist, as you would in Salesforce, you need to pass the ID of the value of the picklist. This will be an integer.">
+                                                </lightning-helptext></span></h4>
+                                            </template>
+                                        </template>
+                                    </template>
+                                    <!--template if:true={nsField.isArray}>
+                                        <template if:true={nsField.fieldType}>
+                                            <template for:each={nsField.fieldType} for:item="nsSubFieldTypeForParent" for:index="objFieldParentIndex">
+                                                <div key={nsSubFieldTypeForParent.key} class="slds-m-top_x-large">
+                                                    <h4 key={nsSubFieldTypeForParent.key} class="slds-p-horizontal_xx-large slds-m-horizontal_none">REFERENCE : {nsSubFieldTypeForParent.fieldType} </h4>
+                                                </div>
+                                            </template>
+                                        </template>
+                                    </template-->
+                                </div>
+                                <!-- End selected Netsuite object fieldtype in second page -->
+
+                                <!-- Start selected Salesforce object fieldname list in second page -->
+                                <div class="slds-size_1-of-3 slds-m-left_x-large">
+                                    <template if:false={nsField.isArray}>
+                                        <template if:true={nsField.sfFields}>
+                                            <select class="slds-select slds-p-horizontal_small" name="getObjField"
+                                                data-key-id={nsField.key} data-field-type={nsField.fieldType}
+                                                data-index={index} onchange={changeHandler}>
+                                                <option value="none">-- None --</option>
+                                                <template for:each={nsField.sfFields} for:item="sfField">
+                                                    <option key={nsField.key} value={sfField.value} selected={sfField.isSelected}>{sfField.value}</option>
+                                                </template>
+                                            </select>
+                                        </template>
+                                    </template>
+                                    <template if:true={nsField.isArray}>
+                                        <template if:true={nsField.fieldType}>
+                                            <template for:each={nsField.fieldType} for:item="nsSubFieldForParent" for:index="objFieldParentIndex">
+                                                <div key={nsSubFieldForParent.key}>
+                                                    <select key={nsSubFieldForParent.key} class="slds-select slds-p-horizontal_small" name="getObjFieldForParent"
+                                                        data-key-id={nsSubFieldForParent.key} data-field-type={nsSubFieldForParent.fieldType} 
+                                                        data-parent-index={index} data-index={objFieldParentIndex} onchange={changeHandler}>
+                                                        <option value="none">-- None --</option>
+                                                        <template for:each={nsSubFieldForParent.sfFields} for:item="sfFieldForParent">
+                                                            <option key={nsSubFieldForParent.key} value={sfFieldForParent.value} selected={sfFieldForParent.isSelected}>{sfFieldForParent.value}</option>
+                                                        </template>
+                                                    </select>
+                                                </div>
+                                            </template>
+                                        </template>
+                                    </template>
+                                    <!--template if:true={nsField.isArray}>
+                                        <div class="slds-m-bottom_large"></div>
+                                        <template if:true={nsField.fieldType}>
+                                            <template for:each={nsField.fieldType} for:item="nsSubFieldForParent" for:index="objFieldParentIndex">
+                                                <div key={nsSubFieldForParent.key} class="slds-m-bottom_x-small">
+                                                    <select key={nsSubFieldForParent.key} class="slds-select slds-p-horizontal_small" name="getObjFieldForParent"
+                                                        data-key-id={nsSubFieldForParent.key} data-field-type={nsSubFieldForParent.fieldType} 
+                                                        data-parent-index={index} data-index={objFieldParentIndex} onchange={changeHandler}>
+                                                        <option value="none">-- None --</option>
+                                                        <template for:each={nsSubFieldForParent.sfFields} for:item="sfFieldForParent">
+                                                            <option key={nsSubFieldForParent.key} value={sfFieldForParent.value} selected={sfFieldForParent.isSelected}>{sfFieldForParent.value}</option>
+                                                        </template>
+                                                    </select>
+                                                </div>
+                                            </template>
+                                        </template>
+                                    </template-->
+                                </div>
+                                <!-- End selected Salesforce object fieldname list in second page -->
+                                
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <!-- End displaying body of Second page of parent component "customTriggerGenLWC" -->
+                <br />
+
+                <!-- Start "Previous" and "Generate Apex" button -->
+                <div class="slds-m-top_small slds-m-bottom_medium slds-align_absolute-center">
+                    <lightning-button variant="neutral" label="Start Over" onclick={onLoad} class="slds-m-left_x-small"></lightning-button>
+                    <!--lightning-button variant="neutral" label="&emsp;&ensp; Prevoius &emsp;&ensp;" onclick={onPrevious} class="slds-m-left_x-small"></lightning-button-->
+                    <lightning-button variant="brand" label="Generate Apex" onclick={apexGeneration} class="slds-m-left_x-small"></lightning-button>
+                </div>
+                <!-- End "Previous" and "Generate Apex" button -->
+            </lightning-card>
+        </template>
+        <!-- End second page -->
+
+        <!-- Start third page -->
+        <template if:true={generateApex}>
+            <div class="slds-box slds-m-horizontal_xx-small slds-theme_default" style="border-top: 3px solid #0070D2;">
+                    <div class="slds-grid slds-gutters slds-wrap">
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 slds-p-around--small">
+                            <label class="slds-form-element__label"><b><h1>Apex Trigger</h1></b></label>
+                            <div class="copy-trigger slds-scrollable" style="border: 1px solid #DDDBDA; height: 31em;">
+                                <!-- Start show data of type "Create Trigger Oncreate" -->
+                                <template if:true={hasCreateTriggerOnCreateRendered}>
+                                    <!-- Start Trigger -->
+                                    <pre class="slds-m-around_xx-small">// Start Trigger</pre>
+                                    <pre class="slds-m-around_xx-small">// trigger executed after {sfObjLabel} record is inserted...</pre>
+                                    <pre class="slds-m-around_xx-small">trigger BW_{sfObjWithOutSpaceLabel}Trigger on {sfObjApi} (after insert) {</pre>
+                                    <pre class="slds-m-around_xx-small">    if(Trigger.isInsert && Trigger.isAfter){</pre>
+                                    
+                                    <!-- Start show data of type 'Create Trigger Oncreate Queueable' -->
+                                    <template if:true={hasCreateTriggerOnCreateQueueableRendered}>
+                                        <pre class="slds-m-around_xx-small">        System.enqueueJob(new Write{netSuitObjLabel}Queueable(Trigger.New));</pre>
+                                    </template>
+                                    <!-- End show data of type 'Create Trigger Oncreate Queueable' -->
+            
+                                    <!-- Start show data of type 'Create Trigger Oncreate Future' -->
+                                    <template if:true={hasCreateTriggerOnCreateFutureRendered}>
+                                        <pre class="slds-m-around_xx-small">        Write{netSuitObjLabel}Future.write{netSuitObjLabel}(JSON.serialize(Trigger.New));</pre>
+                                    </template>
+                                    <!-- End show data of type 'Create Trigger Oncreate Future' -->
+            
+                                    <pre class="slds-m-around_xx-small">    }</pre>
+                                    <pre class="slds-m-around_xx-small">}</pre>
+                                    <pre class="slds-m-around_xx-small">// End Trigger</pre>
+                                    <!-- End Trigger -->
+                                </template>
+                            </div>
+                            <!-- Start "Cancel" and "Copy" button -->
+                            <div class="slds-m-top_large slds-align_absolute-center">
+                                <lightning-button variant="brand" label="Copy Apex Trigger" onclick={copyToTrigger} class="slds-button"></lightning-button>
+                            </div>
+                            <!-- End "Previous" and "Generate Apex" button -->
+                        </div>
+                        <!-- End displaying Netsuite Objectname List -->
+
+                        <!-- Start displaying Salesforce Objectname List -->
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 slds-p-around--small">
+                            <label class="slds-form-element__label"><b><h1>Apex Class</h1></b></label>
+                                <div class="copy-apex slds-scrollable" style="border: 1px solid #DDDBDA; height: 31em;">
+                                    <template if:true={hasCreateTriggerOnCreateRendered}>
+                                        <!-- Start show data of type 'Create Trigger Oncreate Queueable' -->
+                                        <template if:true={hasCreateTriggerOnCreateQueueableRendered}>
+                                            <pre class="slds-m-around_xx-small">// Start Queueable Class called from Trigger 'BW_{sfObjWithOutSpaceLabel}Trigger'</pre>
+                                            <pre class="slds-m-around_xx-small">public class Write{netSuitObjLabel}Queueable implements Queueable, Database.AllowsCallouts {</pre>
+                                            <pre class="slds-m-around_xx-small">    List&lt;{sfObjApi}> {sfObjWithOutSpaceLabel}List;</pre><br/>
+                                            
+                                            <pre class="slds-m-around_xx-small">    public Write{netSuitObjLabel}Queueable(List&lt;{sfObjApi}> {sfObjApi}Recs) {</pre>
+                                            <pre class="slds-m-around_xx-small">        this.{sfObjWithOutSpaceLabel}List = {sfObjApi}Recs;</pre>
+                                            <pre class="slds-m-around_xx-small">    }</pre><br/>
+                                            
+                                            <pre class="slds-m-around_xx-small">    public void execute(QueueableContext context) {</pre>
+                                            <pre class="slds-m-around_xx-small">        try{</pre>
+                                        </template>
+                                        <!-- End show data of type 'Create Trigger Oncreate Queueable' -->
+
+                                        <!-- Start show data of type 'Create Trigger Oncreate Future' -->
+                                        <template if:true={hasCreateTriggerOnCreateFutureRendered}>
+                                            <pre class="slds-m-around_xx-small">// Start Future Method Class called from Trigger 'BW_{sfObjWithOutSpaceLabel}Trigger'</pre>
+                                            <pre class="slds-m-around_xx-small">public class Write{netSuitObjLabel}Future {</pre>
+                                            <pre class="slds-m-around_xx-small">    @future (callout=true)</pre>
+                                            <pre class="slds-m-around_xx-small">    public static void write{netSuitObjLabel}(String {sfObjApi}Recs) {</pre>
+                                            <pre class="slds-m-around_xx-small">        List&lt;{sfObjApi}> {sfObjWithOutSpaceLabel}List = new List&lt;{sfObjApi}>();</pre>
+                                            <pre class="slds-m-around_xx-small">        try{</pre>
+                                            <pre class="slds-m-around_xx-small">            {sfObjWithOutSpaceLabel}List = (List&lt;{sfObjApi}>)JSON.deserialize({sfObjApi}Recs , List&lt;{sfObjApi}>.class);</pre>
+                                        </template>
+                                        <!-- End show data of type 'Create Trigger Oncreate Future' -->
+
+                                        <!-- Start General for 'Create Trigger Oncreate' -->
+                                        <pre class="slds-m-around_xx-small">            List&lt;Object> {netSuitObjLabel}List = new List&lt;Object>();</pre><br/>
+                                        <pre class="slds-m-around_xx-small">            //Iteration for all inserted {sfObjLabel} records</pre>
+                                        <pre class="slds-m-around_xx-small">            for({sfObjApi} {sfObjWithOutSpaceLabel}Var : {sfObjWithOutSpaceLabel}List){</pre>
+                                        <pre class="slds-m-around_xx-small">                Map&lt;String, Object> {netSuitObjLabel}Map = new Map&lt;String, Object>(); </pre>
+                                        <pre class="slds-m-around_xx-small">                //Assign value of {sfObjLabel} to {netSuitObjLabelWithSpace}</pre>
+                                        
+                                        <!-- Start show data of field type 'ID' Without Child -->
+                                        <template if:true={hasIdWithoutChildRendered}>
+                                            <template if:true={apexIdWithoutChildGenerator}>
+                                                <template for:each={apexIdWithoutChildGenerator} for:item="IdWithoutChildFieldMapping">
+                                                    <template if:true={IdWithoutChildFieldMapping.apiKey}>
+                                                        <template if:false={IdWithoutChildFieldMapping.isChild}>
+                                                            <pre class="slds-m-around_xx-small" key={IdWithoutChildFieldMapping.key}>                {netSuitObjLabel}Map.put('{IdWithoutChildFieldMapping.key}',{sfObjWithOutSpaceLabel}Var.{IdWithoutChildFieldMapping.apiKey});</pre>
+                                                        </template>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'ID' Without Child -->
+
+                                        <!-- Start show data of field type 'ID' With Child -->
+                                        <template if:true={hasIdWithChildRendered}>
+                                            <template if:true={apexIdWithChildGenerator}>
+                                                <template for:each={apexIdWithChildGenerator} for:item="IdWithChildFieldMapping">
+                                                    <pre class="slds-m-around_xx-small" key={IdWithChildFieldMapping.apiKey}>                {netSuitObjLabel}Map.put('{IdWithChildFieldMapping.apiKey}' , new Map&lt;String, Object>&#123;
+                                                        <template if:true={IdWithChildFieldMapping.apiKey}>
+                                                            <template if:true={IdWithChildFieldMapping.isChild}>
+                                                                <template for:each={IdWithChildFieldMapping.value} for:item="IdWithChildFieldValueMapping">
+                                                                    <template if:true={IdWithChildFieldValueMapping.apiKey}>
+                                                                        '{IdWithChildFieldValueMapping.key}' => {sfObjWithOutSpaceLabel}Var.{IdWithChildFieldValueMapping.childKey}
+                                                                    </template>
+                                                                </template>
+                                                            </template>
+                                                        </template>
+                                                        &#125;); 
+                                                    </pre>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'ID' With Child -->
+
+                                        <!-- Start show data of field type 'REFERENCE' Without Child -->
+                                        <template if:true={hasReferenceWithoutChildRendered}>
+                                            <template if:true={apexReferenceWithoutChildGenerator}>
+                                                <template for:each={apexReferenceWithoutChildGenerator} for:item="ReferenceWithoutChildFieldMapping">
+                                                    <template if:true={ReferenceWithoutChildFieldMapping.apiKey}>
+                                                        <template if:false={ReferenceWithoutChildFieldMapping.isChild}>
+                                                            <pre class="slds-m-around_xx-small" key={ReferenceWithoutChildFieldMapping.key}>                {netSuitObjLabel}Map.put('{ReferenceWithoutChildFieldMapping.key}',{sfObjWithOutSpaceLabel}Var.{ReferenceWithoutChildFieldMapping.apiKey});</pre>
+                                                        </template>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'REFERENCE' Without Child -->
+
+                                        <!-- Start show data of field type 'REFERENCE' With Child -->
+                                        <template if:true={hasReferenceWithChildRendered}>
+                                            <template if:true={apexReferenceWithChildGenerator}>
+                                                <template for:each={apexReferenceWithChildGenerator} for:item="ReferenceWithChildFieldMapping">
+                                                    <pre class="slds-m-around_xx-small" key={ReferenceWithChildFieldMapping.apiKey}>                {netSuitObjLabel}Map.put('{ReferenceWithChildFieldMapping.apiKey}' , new Map&lt;String, Object>&#123;
+                                                        <template if:true={ReferenceWithChildFieldMapping.apiKey}>
+                                                            <template if:true={ReferenceWithChildFieldMapping.isChild}>
+                                                                <template for:each={ReferenceWithChildFieldMapping.value} for:item="ReferenceWithChildFieldValueMapping">
+                                                                    <template if:true={ReferenceWithChildFieldValueMapping.apiKey}>
+                                                                        '{ReferenceWithChildFieldValueMapping.key}' => {sfObjWithOutSpaceLabel}Var.{ReferenceWithChildFieldValueMapping.childKey}
+                                                                    </template>
+                                                                </template>
+                                                            </template>
+                                                        </template>
+                                                        &#125;); 
+                                                    </pre>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'REFERENCE' With Child -->
+
+                                        <!-- Start show data of field type 'DATE' Without Child -->
+                                        <template if:true={hasDateWithoutChildRendered}>
+                                            <template if:true={apexDateWithoutChildGenerator}>
+                                                <template for:each={apexDateWithoutChildGenerator} for:item="DateWithoutChildFieldMapping">
+                                                    <template if:true={DateWithoutChildFieldMapping.apiKey}>
+                                                        <template if:false={DateWithoutChildFieldMapping.isChild}>
+                                                            <pre class="slds-m-around_xx-small" key={DateWithoutChildFieldMapping.key}>                {netSuitObjLabel}Map.put('{DateWithoutChildFieldMapping.key}',{sfObjWithOutSpaceLabel}Var.{DateWithoutChildFieldMapping.apiKey});</pre>
+                                                        </template>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'DATE' Without Child -->
+
+                                        <!-- Start show data of field type 'DATE' With Child -->
+                                        <template if:true={hasDateWithChildRendered}>
+                                            <template if:true={apexDateWithChildGenerator}>
+                                                <template for:each={apexDateWithChildGenerator} for:item="DateWithChildFieldMapping">
+                                                    <pre class="slds-m-around_xx-small" key={DateWithChildFieldMapping.apiKey}>                {netSuitObjLabel}Map.put('{DateWithChildFieldMapping.apiKey}' , new Map&lt;String, Object>&#123;
+                                                        <template if:true={DateWithChildFieldMapping.apiKey}>
+                                                            <template if:true={DateWithChildFieldMapping.isChild}>
+                                                                <template for:each={DateWithChildFieldMapping.value} for:item="DateWithChildFieldValueMapping">
+                                                                    <template if:true={DateWithChildFieldValueMapping.apiKey}>
+                                                                        '{DateWithChildFieldValueMapping.key}' => {sfObjWithOutSpaceLabel}Var.{DateWithChildFieldValueMapping.childKey}
+                                                                    </template>
+                                                                </template>
+                                                            </template>
+                                                        </template>
+                                                        &#125;); 
+                                                    </pre>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'DATE' With Child -->
+
+                                        <!-- Start show data of field type 'DATETIME' Without Child -->
+                                        <template if:true={hasDateTimeWithoutChildRendered}>
+                                            <template if:true={apexDateTimeWithoutChildGenerator}>
+                                                <template for:each={apexDateTimeWithoutChildGenerator} for:item="DateTimeWithoutChildFieldMapping">
+                                                    <template if:true={DateTimeWithoutChildFieldMapping.apiKey}>
+                                                        <template if:false={DateTimeWithoutChildFieldMapping.isChild}>
+                                                            <pre class="slds-m-around_xx-small" key={DateTimeWithoutChildFieldMapping.key}>                {netSuitObjLabel}Map.put('{DateTimeWithoutChildFieldMapping.key}',{sfObjWithOutSpaceLabel}Var.{DateTimeWithoutChildFieldMapping.apiKey}.getTime()/1000);</pre>
+                                                        </template>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'DATETIME' Without Child -->
+
+                                        <!-- Start show data of field type 'DATETIME' With Child -->
+                                        <template if:true={hasDateTimeWithChildRendered}>
+                                            <template if:true={apexDateTimeWithChildGenerator}>
+                                                <template for:each={apexDateTimeWithChildGenerator} for:item="DateTimeWithChildFieldMapping">
+                                                    <pre class="slds-m-around_xx-small" key={DateTimeWithChildFieldMapping.apiKey}>                {netSuitObjLabel}Map.put('{DateTimeWithChildFieldMapping.apiKey}' , new Map&lt;String, Object>&#123;
+                                                        <template if:true={DateTimeWithChildFieldMapping.apiKey}>
+                                                            <template if:true={DateTimeWithChildFieldMapping.isChild}>
+                                                                <template for:each={DateTimeWithChildFieldMapping.value} for:item="DateTimeWithChildFieldValueMapping">
+                                                                    <template if:true={DateTimeWithChildFieldValueMapping.apiKey}>
+                                                                        '{DateTimeWithChildFieldValueMapping.key}' => {sfObjWithOutSpaceLabel}Var.{DateTimeWithChildFieldValueMapping.childKey}.getTime()/1000
+                                                                    </template>
+                                                                </template>
+                                                            </template>
+                                                        </template>
+                                                        &#125;); 
+                                                    </pre>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'DATETIME' With Child -->
+
+                                        <!-- Start show data of field type 'STRING' Without Child -->
+                                        <template if:true={hasStringWithoutChildRendered}>
+                                            <template if:true={apexStringWithoutChildGenerator}>
+                                                <template for:each={apexStringWithoutChildGenerator} for:item="StringWithoutChildFieldMapping">
+                                                    <template if:true={StringWithoutChildFieldMapping.apiKey}>
+                                                        <template if:false={StringWithoutChildFieldMapping.isChild}>
+                                                            <pre class="slds-m-around_xx-small" key={StringWithoutChildFieldMapping.key}>                {netSuitObjLabel}Map.put('{StringWithoutChildFieldMapping.key}',{sfObjWithOutSpaceLabel}Var.{StringWithoutChildFieldMapping.apiKey});</pre>
+                                                        </template>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'STRING' Without Child -->
+
+                                        <!-- Start show data of field type 'STRING' With Child -->
+                                        <template if:true={hasStringWithChildRendered}>
+                                            <template if:true={apexStringWithChildGenerator}>
+                                                <template for:each={apexStringWithChildGenerator} for:item="StringWithChildFieldMapping">
+                                                    <pre class="slds-m-around_xx-small" key={StringWithChildFieldMapping.apiKey}>                {netSuitObjLabel}Map.put('{StringWithChildFieldMapping.apiKey}' , new Map&lt;String, Object>&#123;
+
+                                                        <template if:false={StringWithChildFieldMapping.isSubsidiaryList}>
+                                                            <template if:true={StringWithChildFieldMapping.isCustomFieldList}>
+                                                                'customField' => new List&lt;Object>&#123;new Map&lt;String, Object>&#123;
+                                                            </template>
+                                                        </template>
+
+                                                        <template if:true={StringWithChildFieldMapping.apiKey}>
+                                                            <template if:true={StringWithChildFieldMapping.isChild}>
+                                                                <template for:each={StringWithChildFieldMapping.value} for:item="StringWithChildFieldValueMapping">
+                                                                    <template if:true={StringWithChildFieldValueMapping.apiKey}>
+
+                                                                        <template if:true={StringWithChildFieldValueMapping.isSubsidiaryList}>
+                                                                            <template if:false={StringWithChildFieldValueMapping.isCustomFieldList}>
+                                                                                'recordRef' => new List&lt;Object>&#123;new Map&lt;String, Object>&#123;'{StringWithChildFieldValueMapping.key}' => {sfObjWithOutSpaceLabel}Var.{StringWithChildFieldValueMapping.childKey}&#125;&#125;
+                                                                            </template>
+                                                                        </template>
+
+                                                                        <template if:false={StringWithChildFieldValueMapping.isSubsidiaryList}>
+                                                                            <template if:true={StringWithChildFieldValueMapping.isCustomFieldList}>
+                                                                                <template if:true={StringWithChildFieldValueMapping.isCustomFieldValueLookupList}>
+                                                                                    '{StringWithChildFieldValueMapping.key}' => new Map&lt;String, Object>&#123;'internalId' => {sfObjWithOutSpaceLabel}Var.{StringWithChildFieldValueMapping.childKey}&#125;
+                                                                                </template>
+                                                                                <template if:false={StringWithChildFieldValueMapping.isCustomFieldValueLookupList}>
+                                                                                    '{StringWithChildFieldValueMapping.key}' => {sfObjWithOutSpaceLabel}Var.{StringWithChildFieldValueMapping.childKey}
+                                                                                </template>
+                                                                            </template>
+                                                                        </template>
+
+                                                                        <template if:false={StringWithChildFieldValueMapping.isSubsidiaryList}>
+                                                                            <template if:false={StringWithChildFieldValueMapping.isCustomFieldList}>
+                                                                                '{StringWithChildFieldValueMapping.key}' => {sfObjWithOutSpaceLabel}Var.{StringWithChildFieldValueMapping.childKey}
+                                                                            </template>
+                                                                        </template>
+
+                                                                    </template>
+                                                                </template>
+                                                            </template>
+                                                        </template>
+
+                                                        <template if:false={StringWithChildFieldMapping.isSubsidiaryList}>
+                                                            <template if:true={StringWithChildFieldMapping.isCustomFieldList}>
+                                                                &#125;&#125;
+                                                            </template>
+                                                        </template>
+
+                                                        &#125;); 
+                                                    </pre>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'STRING' With Child -->
+
+                                        <!-- Start show data of field type 'DOUBLE' Without Child -->
+                                        <template if:true={hasDoubleWithoutChildRendered}>
+                                            <template if:true={apexDoubleWithoutChildGenerator}>
+                                                <template for:each={apexDoubleWithoutChildGenerator} for:item="DoubleWithoutChildFieldMapping">
+                                                    <template if:true={DoubleWithoutChildFieldMapping.apiKey}>
+                                                        <template if:false={DoubleWithoutChildFieldMapping.isChild}>
+                                                            <pre class="slds-m-around_xx-small" key={DoubleWithoutChildFieldMapping.key}>                {netSuitObjLabel}Map.put('{DoubleWithoutChildFieldMapping.key}',{sfObjWithOutSpaceLabel}Var.{DoubleWithoutChildFieldMapping.apiKey});</pre>
+                                                        </template>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'DOUBLE' Without Child -->
+
+                                        <!-- Start show data of field type 'DOUBLE' With Child -->
+                                        <template if:true={hasDoubleWithChildRendered}>
+                                            <template if:true={apexDoubleWithChildGenerator}>
+                                                <template for:each={apexDoubleWithChildGenerator} for:item="DoubleWithChildFieldMapping">
+                                                    <pre class="slds-m-around_xx-small" key={DoubleWithChildFieldMapping.apiKey}>                {netSuitObjLabel}Map.put('{DoubleWithChildFieldMapping.apiKey}' , new Map&lt;String, Object>&#123;
+                                                        <template if:true={DoubleWithChildFieldMapping.apiKey}>
+                                                            <template if:true={DoubleWithChildFieldMapping.isChild}>
+                                                                <template for:each={DoubleWithChildFieldMapping.value} for:item="DoubleWithChildFieldValueMapping">
+                                                                    <template if:true={DoubleWithChildFieldValueMapping.apiKey}>
+                                                                        '{DoubleWithChildFieldValueMapping.key}' => {sfObjWithOutSpaceLabel}Var.{DoubleWithChildFieldValueMapping.childKey}
+                                                                    </template>
+                                                                </template>
+                                                            </template>
+                                                        </template>
+                                                        &#125;); 
+                                                    </pre>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'DOUBLE' With Child -->
+
+                                        <!-- Start show data of field type 'BOOLEAN' Without Child -->
+                                        <template if:true={hasBooleanWithoutChildRendered}>
+                                            <template if:true={apexBooleanWithoutChildGenerator}>
+                                                <template for:each={apexBooleanWithoutChildGenerator} for:item="BooleanWithoutChildFieldMapping">
+                                                    <template if:true={BooleanWithoutChildFieldMapping.apiKey}>
+                                                        <template if:false={BooleanWithoutChildFieldMapping.isChild}>
+                                                            <pre class="slds-m-around_xx-small" key={BooleanWithoutChildFieldMapping.key}>                {netSuitObjLabel}Map.put('{BooleanWithoutChildFieldMapping.key}',{sfObjWithOutSpaceLabel}Var.{BooleanWithoutChildFieldMapping.apiKey});</pre>
+                                                        </template>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'BOOLEAN' Without Child -->
+
+                                        <!-- Start show data of field type 'BOOLEAN' With Child -->
+                                        <template if:true={hasBooleanWithChildRendered}>
+                                            <template if:true={apexBooleanWithChildGenerator}>
+                                                <template for:each={apexBooleanWithChildGenerator} for:item="BooleanWithChildFieldMapping">
+                                                    <pre class="slds-m-around_xx-small" key={BooleanWithChildFieldMapping.apiKey}>                {netSuitObjLabel}Map.put('{BooleanWithChildFieldMapping.apiKey}' , new Map&lt;String, Object>&#123;
+                                                        <template if:true={BooleanWithChildFieldMapping.apiKey}>
+                                                            <template if:true={BooleanWithChildFieldMapping.isChild}>
+                                                                <template for:each={BooleanWithChildFieldMapping.value} for:item="BooleanWithChildFieldValueMapping">
+                                                                    <template if:true={BooleanWithChildFieldValueMapping.apiKey}>
+                                                                        '{BooleanWithChildFieldValueMapping.key}' => {sfObjWithOutSpaceLabel}Var.{BooleanWithChildFieldValueMapping.childKey}
+                                                                    </template>
+                                                                </template>
+                                                            </template>
+                                                        </template>
+                                                        &#125;); 
+                                                    </pre>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'BOOLEAN' With Child -->
+
+                                        <!-- Start show data of field type 'BILLING ADDRESS' -->
+                                        <template if:true={hasBillingAddressRendered}>
+                                            <template if:true={apexBillingAddressGenerator}>
+                                                <template for:each={apexBillingAddressGenerator} for:item="BillingAddressFieldMapping">
+                                                    <template if:true={BillingAddressFieldMapping.apiKey}>
+                                                        <pre class="slds-m-around_xx-small" key={BillingAddressFieldMapping.key}>
+                                                            <template if:true={boolBillBillAddress}>
+                                                                <pre class="slds-m-around_xx-small">                String billingAddr = String.isNotBlank({sfObjWithOutSpaceLabel}Var.BillingStreet) ? {sfObjWithOutSpaceLabel}Var.BillingStreet : '';</pre>
+                                                            </template>
+                                                            <template if:true={boolBillShipAddress}>
+                                                                <pre class="slds-m-around_xx-small">                String billingAddr = String.isNotBlank({sfObjWithOutSpaceLabel}Var.ShippingStreet) ? {sfObjWithOutSpaceLabel}Var.ShippingStreet : '';</pre>
+                                                            </template>
+                                                            <pre class="slds-m-around_xx-small">                String billingAddr1 = '';</pre>
+                                                            <pre class="slds-m-around_xx-small">                String billingAddr2 = '';</pre>
+                                                            <pre class="slds-m-around_xx-small">                String billingAddr3 = '';</pre>
+                                                            <pre class="slds-m-around_xx-small">                if(billingAddr.length() >= 0 && billingAddr.length() &lt;= 150)&#123;</pre>
+                                                            <pre class="slds-m-around_xx-small">                        billingAddr1 = billingAddr.substring(0,billingAddr.length());</pre>
+                                                            <pre class="slds-m-around_xx-small">                }else if(billingAddr.length() > 150 && billingAddr.length() &lt;= 300)&#123;</pre>
+                                                            <pre class="slds-m-around_xx-small">                        billingAddr1 = billingAddr.substring(0,150);</pre>
+                                                            <pre class="slds-m-around_xx-small">                        billingAddr2 = billingAddr.substring(150,billingAddr.length());</pre>
+                                                            <pre class="slds-m-around_xx-small">                }else if(billingAddr.length() > 300 && billingAddr.length() &lt;= 450)&#123;</pre>
+                                                            <pre class="slds-m-around_xx-small">                        billingAddr1 = billingAddr.substring(0,150);</pre>
+                                                            <pre class="slds-m-around_xx-small">                        billingAddr2 = billingAddr.substring(150,300);</pre>
+                                                            <pre class="slds-m-around_xx-small">                        billingAddr3 = billingAddr.substring(300,billingAddr.length());</pre>
+                                                            <pre class="slds-m-around_xx-small">                }else if(billingAddr.length() > 450)&#123;</pre>
+                                                            <pre class="slds-m-around_xx-small">                        billingAddr1 = billingAddr.substring(0,150);</pre>
+                                                            <pre class="slds-m-around_xx-small">                        billingAddr2 = billingAddr.substring(150,300);</pre>
+                                                            <pre class="slds-m-around_xx-small">                        billingAddr3 = billingAddr.substring(300,450);</pre>
+                                                            <pre class="slds-m-around_xx-small">                }</pre>
+                                                            <br/>
+                                                            <template if:true={boolBillBillAddress}>
+                                                                <pre class="slds-m-around_xx-small">                Map&lt;String, Object> billingAddrFieldMap = new Map&lt;String, Object>();</pre>
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('addr1' , billingAddr1);</pre>
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('addr2' , billingAddr2);</pre>
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('addr3' , billingAddr3);</pre>
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('city' , {sfObjWithOutSpaceLabel}Var.BillingCity);</pre>
+                                                                <!--pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('country' , {sfObjWithOutSpaceLabel}Var.BillingCountry);</pre>-->
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('state' , {sfObjWithOutSpaceLabel}Var.BillingState);</pre>
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('zip' , {sfObjWithOutSpaceLabel}Var.BillingPostalCode);</pre>
+                                                            </template>
+                                                            <template if:true={boolBillShipAddress}>
+                                                                <pre class="slds-m-around_xx-small">                Map&lt;String, Object> billingAddrFieldMap = new Map&lt;String, Object>();</pre>
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('addr1' , billingAddr1);</pre>
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('addr2' , billingAddr2);</pre>
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('addr3' , billingAddr3);</pre>
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('city' , {sfObjWithOutSpaceLabel}Var.ShippingCity);</pre>
+                                                                <!--pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('country' , {sfObjWithOutSpaceLabel}Var.ShippingCountry);</pre>-->
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('state' , {sfObjWithOutSpaceLabel}Var.ShippingState);</pre>
+                                                                <pre class="slds-m-around_xx-small">                billingAddrFieldMap.put('zip' , {sfObjWithOutSpaceLabel}Var.ShippingPostalCode);</pre>
+                                                            </template>
+                                                            <br/>
+                                                            <pre class="slds-m-around_xx-small">                Map&lt;String, Object> abaAddressForBillingMap = new Map&lt;String, Object>();</pre>
+                                                            <pre class="slds-m-around_xx-small">                abaAddressForBillingMap.put('addressbookAddress' , billingAddrFieldMap);</pre>
+                                                            <br/>
+                                                        </pre>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'BILLING ADDRESS' -->
+
+                                        <!-- Start show data of field type 'SHIPPING ADDRESS' -->
+                                        <template if:true={hasShippingAddressRendered}>
+                                            <template if:true={apexShippingAddressGenerator}>
+                                                <template for:each={apexShippingAddressGenerator} for:item="ShippingAddressFieldMapping">
+                                                    <template if:true={ShippingAddressFieldMapping.apiKey}>
+                                                        <pre class="slds-m-around_xx-small" key={ShippingAddressFieldMapping.key}>
+                                                            <template if:true={boolShipBillAddress}>
+                                                                <pre class="slds-m-around_xx-small">                String shippingAddr = String.isNotBlank({sfObjWithOutSpaceLabel}Var.BillingStreet) ? {sfObjWithOutSpaceLabel}Var.BillingStreet : '';</pre>
+                                                            </template>
+                                                            <template if:true={boolShipShipAddress}>
+                                                                <pre class="slds-m-around_xx-small">                String shippingAddr = String.isNotBlank({sfObjWithOutSpaceLabel}Var.ShippingStreet) ? {sfObjWithOutSpaceLabel}Var.ShippingStreet : '';</pre>
+                                                            </template>
+                                                            <pre class="slds-m-around_xx-small">                String shippingAddr1 = '';</pre>
+                                                            <pre class="slds-m-around_xx-small">                String shippingAddr2 = '';</pre>
+                                                            <pre class="slds-m-around_xx-small">                String shippingAddr3 = '';</pre>
+                                                            <pre class="slds-m-around_xx-small">                if(shippingAddr.length() >= 0 && shippingAddr.length() &lt;= 150)&#123;</pre>
+                                                            <pre class="slds-m-around_xx-small">                        shippingAddr1 = shippingAddr.substring(0,shippingAddr.length());</pre>
+                                                            <pre class="slds-m-around_xx-small">                }else if(shippingAddr.length() > 150 && shippingAddr.length() &lt;= 300)&#123;</pre>
+                                                            <pre class="slds-m-around_xx-small">                        shippingAddr1 = shippingAddr.substring(0,150);</pre>
+                                                            <pre class="slds-m-around_xx-small">                        shippingAddr2 = shippingAddr.substring(150,shippingAddr.length());</pre>
+                                                            <pre class="slds-m-around_xx-small">                }else if(shippingAddr.length() > 300 && shippingAddr.length() &lt;= 450)&#123;</pre>
+                                                            <pre class="slds-m-around_xx-small">                        shippingAddr1 = shippingAddr.substring(0,150);</pre>
+                                                            <pre class="slds-m-around_xx-small">                        shippingAddr2 = shippingAddr.substring(150,300);</pre>
+                                                            <pre class="slds-m-around_xx-small">                        shippingAddr3 = shippingAddr.substring(300,shippingAddr.length());</pre>
+                                                            <pre class="slds-m-around_xx-small">                }else if(shippingAddr.length() > 450)&#123;</pre>
+                                                            <pre class="slds-m-around_xx-small">                        shippingAddr1 = shippingAddr.substring(0,150);</pre>
+                                                            <pre class="slds-m-around_xx-small">                        shippingAddr2 = shippingAddr.substring(150,300);</pre>
+                                                            <pre class="slds-m-around_xx-small">                        shippingAddr3 = shippingAddr.substring(300,450);</pre>
+                                                            <pre class="slds-m-around_xx-small">                }</pre>
+                                                            <br/>
+                                                            <template if:true={boolShipBillAddress}>
+                                                                <pre class="slds-m-around_xx-small">                Map&lt;String, Object> shippingAddrFieldMap = new Map&lt;String, Object>();</pre>
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('addr1' , shippingAddr1);</pre>
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('addr2' , shippingAddr2);</pre>
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('addr3' , shippingAddr3);</pre>
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('city' , {sfObjWithOutSpaceLabel}Var.BillingCity);</pre>
+                                                                <!--pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('country' , {sfObjWithOutSpaceLabel}Var.BillingCountry);</pre> -->
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('state' , {sfObjWithOutSpaceLabel}Var.BillingState);</pre>
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('zip' , {sfObjWithOutSpaceLabel}Var.BillingPostalCode);</pre>
+                                                            </template>
+                                                            <template if:true={boolShipShipAddress}>
+                                                                <pre class="slds-m-around_xx-small">                Map&lt;String, Object> shippingAddrFieldMap = new Map&lt;String, Object>();</pre>
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('addr1' , shippingAddr1);</pre>
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('addr2' , shippingAddr2);</pre>
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('addr3' , shippingAddr3);</pre>
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('city' , {sfObjWithOutSpaceLabel}Var.ShippingCity);</pre>
+                                                                <!--pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('country' , {sfObjWithOutSpaceLabel}Var.ShippingCountry);</pre> -->
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('state' , {sfObjWithOutSpaceLabel}Var.ShippingState);</pre>
+                                                                <pre class="slds-m-around_xx-small">                shippingAddrFieldMap.put('zip' , {sfObjWithOutSpaceLabel}Var.ShippingPostalCode);</pre>
+                                                            </template>
+                                                            <br/>
+                                                            <pre class="slds-m-around_xx-small">                Map&lt;String, Object> abaAddressForShippingMap = new Map&lt;String, Object>();</pre>
+                                                            <pre class="slds-m-around_xx-small">                abaAddressForShippingMap.put('addressbookAddress' , shippingAddrFieldMap);</pre>
+                                                            <br/>
+                                                        </pre>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <!-- End show data of field type 'SHIPPING ADDRESS' -->
+
+                                        <template if:true={hasBillingAddressRendered}>
+                                            <template if:false={hasShippingAddressRendered}>
+                                                <pre class="slds-m-around_xx-small">                Map&lt;String, Object> abBillingMap = new Map&lt;String, Object>();</pre>
+                                                <pre class="slds-m-around_xx-small">                abBillingMap.put('addressbook' , new List&lt;Object>&#123;abaAddressForBillingMap});</pre>
+                                                <pre class="slds-m-around_xx-small">                {netSuitObjLabel}Map.put('addressbookList' , abBillingMap);</pre>
+                                                <br/>
+                                            </template>
+                                        </template>
+
+                                        <template if:true={hasShippingAddressRendered}>
+                                            <template if:false={hasBillingAddressRendered}>
+                                                <pre class="slds-m-around_xx-small">                Map&lt;String, Object> abShippingMap = new Map&lt;String, Object>();</pre>
+                                                <pre class="slds-m-around_xx-small">                abShippingMap.put('addressbook' , new List&lt;Object>&#123;abaAddressForShippingMap});</pre>
+                                                <pre class="slds-m-around_xx-small">                {netSuitObjLabel}Map.put('addressbookList' , abShippingMap);</pre>
+                                                <br/>
+                                            </template>
+                                        </template>
+
+                                        <template if:true={hasShippingAddressRendered}>
+                                            <template if:true={hasBillingAddressRendered}>
+                                                <pre class="slds-m-around_xx-small">                Map&lt;String, Object> abBillingShippingMap = new Map&lt;String, Object>();</pre>
+                                                <pre class="slds-m-around_xx-small">                abBillingShippingMap.put('addressbook' , new List&lt;Object>&#123;abaAddressForBillingMap,abaAddressForShippingMap});</pre>
+                                                <pre class="slds-m-around_xx-small">                {netSuitObjLabel}Map.put('addressbookList' , abBillingShippingMap);</pre>
+                                                <br/>
+                                            </template>
+                                        </template>
+
+                                        <pre class="slds-m-around_xx-small">                {netSuitObjLabel}List.add({netSuitObjLabel}Map);</pre>
+                                        <pre class="slds-m-around_xx-small">            }</pre><br/>
+
+
+
+                                        <pre class="slds-m-around_xx-small">            Map&lt;String, Object> reqJSONMap = new Map&lt;String, Object>(); </pre>
+                                        <template if:true={boolNetSuiteCompany}>
+                                            <pre class="slds-m-around_xx-small">            reqJSONMap.put('customers' , {netSuitObjLabel}List); </pre>
+                                        </template>
+                                        <template if:true={boolNetSuiteItem}>
+                                            <pre class="slds-m-around_xx-small">            reqJSONMap.put('items' , {netSuitObjLabel}List); </pre>
+                                        </template>
+                                        <pre class="slds-m-around_xx-small">            String reqJSON = JSON.serialize(reqJSONMap); </pre> <br/>
+
+
+
+                                        <pre class="slds-m-around_xx-small">            Map&lt;String, Object> finalReqMap = new Map&lt;String, Object>(); </pre>
+                                        <pre class="slds-m-around_xx-small">            finalReqMap.put('version' , '1.0'); </pre>
+                                        <template if:true={boolNetSuiteCompany}>
+                                            <pre class="slds-m-around_xx-small">            finalReqMap.put('action' , 'createCustomer'); </pre>
+                                        </template>
+                                        <template if:true={boolNetSuiteItem}>
+                                            <pre class="slds-m-around_xx-small">            finalReqMap.put('action' , 'createItem'); </pre>
+                                        </template>
+                                        <pre class="slds-m-around_xx-small">            finalReqMap.put('RequestJSON' , reqJSON); </pre>
+                                        <pre class="slds-m-around_xx-small">            System.debug('Request ::: ' + finalReqMap); </pre> <br/>
+
+
+
+                                        
+                                        <pre class="slds-m-around_xx-small">            Map&lt;String, Object> respMap = {netSuitePackageNamespace}.BreadwinnerNetSuiteAPI.call(finalReqMap);</pre>
+                                        <pre class="slds-m-around_xx-small">            System.debug('Response ::: ' + respMap);</pre>
+                                        <!-- End General for 'Create Trigger Oncreate' -->
+
+                                        <!-- Start show data of type 'Create Trigger Oncreate Future' -->
+                                        <template if:true={hasCreateTriggerOnCreateFutureRendered}>
+                                            <pre class="slds-m-around_xx-small">        }catch(Exception e) {</pre>
+                                            <pre class="slds-m-around_xx-small">            System.debug('Exception Error ::: ' + e);</pre>
+                                            <pre class="slds-m-around_xx-small">        }</pre>
+                                            <pre class="slds-m-around_xx-small">    }</pre>
+                                            <pre class="slds-m-around_xx-small">}</pre>
+                                            <pre class="slds-m-around_xx-small">// End Future Method Class called from Trigger "BW_{sfObjWithOutSpaceLabel}Trigger"</pre>
+                                        </template>
+                                        <!-- End show data of type 'Create Trigger Oncreate Future' -->
+
+                                        <!-- Start show data of type 'Create Trigger Oncreate Queueable' -->
+                                        <template if:true={hasCreateTriggerOnCreateQueueableRendered}>
+                                            <pre class="slds-m-around_xx-small">        }catch(Exception e) { </pre>
+                                            <pre class="slds-m-around_xx-small">            System.debug('Exception Error ::: ' + e);</pre>
+                                            <pre class="slds-m-around_xx-small">        } </pre>
+                                            <pre class="slds-m-around_xx-small">    }</pre>
+                                            <pre class="slds-m-around_xx-small">}</pre>
+                                            <pre class="slds-m-around_xx-small">// End Queueable Class called from Trigger "BW_{sfObjWithOutSpaceLabel}Trigger"</pre>
+                                        </template>
+                                        <!-- End show data of type "Create Trigger Oncreate Queueable" -->
+                                    </template>
+                                </div>
+                            <!-- Start "Cancel" and "Copy" button -->
+                            <div class="slds-m-top_large slds-align_absolute-center">
+                                <lightning-button variant="brand" label="Copy Apex Class" onclick={copyToApex} class="slds-button"></lightning-button>
+                            </div>
+                            <!-- End "Previous" and "Generate Apex" button -->
+                        </div>
+                    </div>
+
+            </div>            
+        </template>
+        <!-- End third page -->
+    </div>
+    <!-- End Component -->
+</template>
+<!-- End Parent Component -->

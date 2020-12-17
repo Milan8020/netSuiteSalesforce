@@ -1,0 +1,16 @@
+{
+  "status": 0,
+  "result": {
+    "createdById": "0054x000000b73RAAQ",
+    "createdByName": "Subhash Panchani",
+    "createdDate": "2020-11-26T11:01:25.000Z",
+    "fileName": "aura/customTriggerGenAura",
+    "fullName": "customTriggerGenAura",
+    "id": "0Ab4x000000YxMyCAK",
+    "lastModifiedById": "0054x000000b73RAAQ",
+    "lastModifiedByName": "Subhash Panchani",
+    "lastModifiedDate": "2020-11-26T13:26:00.000Z",
+    "manageableState": "unmanaged",
+    "type": "AuraDefinitionBundle"
+  }
+}
